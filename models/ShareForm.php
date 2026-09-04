@@ -9,12 +9,13 @@ class ShareForm extends Model
 {
     public $spaces = [];
     public $onProfile = false;
+    public $allowReshare = false;
 
     public function rules()
     {
         return [
             ['spaces', 'safe'],
-            ['onProfile', 'boolean'],
+            [['onProfile', 'allowReshare'], 'boolean'],
         ];
     }
 
@@ -23,6 +24,7 @@ class ShareForm extends Model
         return [
             'spaces' => Yii::t('SharebetweenModule.base', 'Spaces'),
             'onProfile' => Yii::t('SharebetweenModule.base', 'Share this content on your profile stream'),
+            'allowReshare' => Yii::t('SharebetweenModule.base', 'Allow other users to share this content'),
         ];
     }
 
@@ -31,6 +33,7 @@ class ShareForm extends Model
         return [
             'spaces' => Yii::t('SharebetweenModule.base', 'Select Spaces here on which the content is to be additionally displayed.'),
             'onProfile' => Yii::t('SharebetweenModule.base', 'Content you create is automatically displayed on your profile.'),
+            'allowReshare' => Yii::t('SharebetweenModule.base', 'For private profile content, sharing must be enabled explicitly.'),
         ];
     }
 

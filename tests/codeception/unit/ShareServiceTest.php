@@ -3,6 +3,7 @@
 namespace humhub\modules\sharebetween\codeceptionTest\unit;
 
 use humhub\modules\post\models\Post;
+use humhub\modules\sharebetween\models\SharePolicy;
 use humhub\modules\sharebetween\services\ShareService;
 use humhub\modules\space\models\Space;
 use tests\codeception\_support\HumHubDbTestCase;
@@ -95,6 +96,20 @@ class ShareServiceTest extends HumHubDbTestCase
         // Private Posts can never shared
         $this->assertFalse((new ShareService($postUser2Space2Private, Yii::$app->user->getIdentity()))->canCreate($space3));
         $this->assertFalse((new ShareService($postUser2Space2Private, Yii::$app->user->getIdentity()))->canCreate($space5));
+    }
+
+    public function testSharePolicyDefaultsAndOverride()
+    {
+        $publicPost = Post::findOne(['id' => 10]);
+        $privatePost = Post::findOne(['id' => 11]);
+
+        $this->assertTrue(SharePolicy::isAllowed($publicPost->content));
+        $this->assertFalse(SharePolicy::isAllowed($privatePost->content));
+
+        $this->assertTrue(SharePolicy::setAllowed($privatePost->content, true));
+        $this->assertTrue(SharePolicy::isAllowed($privatePost->content));
+
+        SharePolicy::deleteAll(['content_id' => $privatePost->content->id]);
     }
 
 }

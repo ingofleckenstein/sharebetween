@@ -4,9 +4,10 @@ namespace humhub\modules\sharebetween\widgets;
 
 use humhub\helpers\Html;
 use humhub\modules\content\components\ContentActiveRecord;
-use humhub\modules\content\models\Content;
 use humhub\modules\sharebetween\models\Share;
+use humhub\modules\sharebetween\models\SharePolicy;
 use humhub\modules\sharebetween\services\ShareService;
+use humhub\modules\user\models\User;
 use Yii;
 use yii\base\Widget;
 use yii\helpers\Url;
@@ -24,7 +25,10 @@ class ShareLink extends Widget
             return '';
         }
 
-        if ((int)$this->record->content->visibility !== Content::VISIBILITY_PUBLIC) {
+        $content = $this->record->content;
+        $isPrivateProfileContent = !$content->isPublic() && $content->container instanceof User;
+
+        if (!$content->isPublic() && !$isPrivateProfileContent) {
             return '';
         }
 
@@ -33,6 +37,11 @@ class ShareLink extends Widget
         }
 
         if (Yii::$app->user->isGuest) {
+            return '';
+        }
+
+        $isOwner = (int) $content->created_by === (int) Yii::$app->user->id;
+        if (!$isOwner && !SharePolicy::isAllowed($content)) {
             return '';
         }
 

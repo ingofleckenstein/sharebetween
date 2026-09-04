@@ -11,6 +11,7 @@ use humhub\modules\content\models\ContentContainer;
 use humhub\modules\content\models\ContentContainerDefaultPermission;
 use humhub\modules\post\permissions\CreatePost;
 use humhub\modules\sharebetween\models\Share;
+use humhub\modules\sharebetween\models\SharePolicy;
 use humhub\modules\space\models\Space;
 use humhub\modules\space\widgets\Chooser;
 use humhub\modules\user\models\User;
@@ -62,8 +63,12 @@ final readonly class ShareService
 
     public function canCreate(ContentContainerActiveRecord $container): bool
     {
-        if ($this->record->content->visibility !== Content::VISIBILITY_PUBLIC) {
+        if (!SharePolicy::isAllowed($this->record->content)) {
             return false;
+        }
+
+        if ($this->record->content->visibility !== Content::VISIBILITY_PUBLIC) {
+            return $this->canCreatePrivateProfileShare($container);
         }
 
         if (!$this->record->content->getStateService()->isPublished()) {
@@ -89,6 +94,16 @@ final readonly class ShareService
         return true;
     }
 
+    private function canCreatePrivateProfileShare(ContentContainerActiveRecord $container): bool
+    {
+        return $this->record->content->container instanceof User
+            && $container instanceof User
+            && (int) $container->id === (int) $this->user->getId()
+            && $this->record->content->contentcontainer_id !== $container->contentcontainer_id
+            && !Yii::$app->getModule('user')->profileDisableStream
+            && $this->record->content->getStateService()->isPublished();
+    }
+
     public function create(ContentContainerActiveRecord $container): bool
     {
         $share = new Share($container);
@@ -99,6 +114,13 @@ final readonly class ShareService
     public function delete(ContentContainerActiveRecord $container): void
     {
         foreach ($this->getShareByContainer($container)->all() as $share) {
+            $share->hardDelete();
+        }
+    }
+
+    public function removeAll(): void
+    {
+        foreach (Share::find()->andWhere(['content_id' => $this->record->content->id])->all() as $share) {
             $share->hardDelete();
         }
     }
@@ -124,6 +146,10 @@ final readonly class ShareService
 
     public function searchSpaces(string $keyword): array
     {
+        if (!$this->record->content->isPublic()) {
+            return [];
+        }
+
         $spaces = Space::find()
             ->visible($this->user)
             ->filterBlockedSpaces($this->user)

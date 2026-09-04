@@ -10,16 +10,24 @@ use yii\helpers\Url;
 /* @var $model ShareForm */
 /* @var $content Content */
 /* @var $allowShareOnProfile bool */
+/* @var $allowSpaceSharing bool */
+/* @var $isOwner bool */
 ?>
 <?php $form = Modal::beginFormDialog([
         'title' => Yii::t('SharebetweenModule.base', '<strong>Share</strong> content'),
         'footer' => ModalButton::cancel() . ' ' . ModalButton::save()->submit(),
     ]); ?>
-    <?= $form->field($model, 'spaces')->widget(SpacePickerField::class, [
-        'url' => Url::to(['/sharebetween/share/search-spaces', 'id' => $content->id]),
-        'minInput' => 0,
-    ])->label(false) ?>
+    <?php if ($allowSpaceSharing) : ?>
+        <?= $form->field($model, 'spaces')->widget(SpacePickerField::class, [
+            'url' => Url::to(['/sharebetween/share/search-spaces', 'id' => $content->id]),
+            'minInput' => 0,
+        ])->label(false) ?>
+    <?php endif; ?>
     <?php if ($allowShareOnProfile) : ?>
         <?= $form->field($model, 'onProfile')->checkbox() ?>
+    <?php endif; ?>
+    <?php if ($isOwner) : ?>
+        <hr>
+        <?= $form->field($model, 'allowReshare')->checkbox() ?>
     <?php endif; ?>
 <?php Modal::endFormDialog(); ?>

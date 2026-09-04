@@ -1,6 +1,12 @@
 Changelog
 =========
 
+1.1.2 (Unreleased)
+------------------
+- Enh: Authors can allow or prevent resharing per content item
+- Enh: Approved private profile content can be reshared to a user's own profile stream
+- Enh: Disabling resharing removes existing shares of that content
+
 1.1.1 (Februrary 26, 2026)
 --------------------------
 - Fix #61: Update module resources path

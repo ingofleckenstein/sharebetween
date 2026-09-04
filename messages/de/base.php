@@ -1,8 +1,10 @@
 <?php
 return [
+  'Allow other users to share this content' => 'Anderen Nutzern erlauben, diesen Inhalt zu teilen',
   '<strong>Share</strong> content' => '<strong>Inhalt</strong> teilen',
   'Content not available' => 'Inhalt nicht verfügbar',
   'Content you create is automatically displayed on your profile.' => 'Von dir erstellte Inhalte werden automatisch in deinem Profil angezeigt.',
+  'For private profile content, sharing must be enabled explicitly.' => 'Bei privaten Profilinhalten muss das Teilen ausdrücklich aktiviert werden.',
   'Select Spaces here on which the content is to be additionally displayed.' => 'Wähle die Spaces aus, in denen dieser Inhalt zusätzlich angezeigt werden soll.',
   'Share' => 'Teilen',
   'Share Content' => 'Inhalte teilen',

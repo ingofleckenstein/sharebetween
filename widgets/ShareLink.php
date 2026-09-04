@@ -41,19 +41,37 @@ class ShareLink extends Widget
         }
 
         $isOwner = (int) $content->created_by === (int) Yii::$app->user->id;
-        if (!$isOwner && !SharePolicy::isAllowed($content)) {
+        $isShareAllowed = SharePolicy::isAllowed($content);
+        if (!$isOwner && !$isShareAllowed) {
             return '';
+        }
+
+        $linkOptions = [
+            'data-action-click' => 'ui.modal.load',
+            'data-action-click-url' => Url::toRoute(['/sharebetween/share', 'id' => $content->id]),
+        ];
+
+        if ($isOwner) {
+            $label = $isShareAllowed
+                ? Html::tag('i', '', ['class' => 'fa fa-share-alt', 'aria-hidden' => 'true']) . ' '
+                    . Yii::t('SharebetweenModule.base', 'Shareable')
+                : Html::tag('i', '', ['class' => 'fa fa-lock', 'aria-hidden' => 'true']) . ' '
+                    . Yii::t('SharebetweenModule.base', 'Sharing blocked');
+            $tooltip = $isShareAllowed
+                ? Yii::t('SharebetweenModule.base', 'Other users can share this content. Click here to change this setting.')
+                : Yii::t('SharebetweenModule.base', 'This content cannot currently be shared. Click here to allow sharing.');
+            Html::addTooltip($linkOptions, $tooltip);
+            $linkOptions['aria-label'] = $tooltip;
+        } else {
+            $label = Yii::t('SharebetweenModule.base', 'Share');
         }
 
         return Html::tag(
             'span',
             Html::a(
-                Yii::t('SharebetweenModule.base', 'Share') . $this->getCounter(),
+                $label . $this->getCounter(),
                 '#',
-                [
-                    'data-action-click' => 'ui.modal.load',
-                    'data-action-click-url' => Url::toRoute(['/sharebetween/share', 'id' => $this->record->content->id]),
-                ],
+                $linkOptions,
             ),
             ['class' => 'share-between-container'],
         );

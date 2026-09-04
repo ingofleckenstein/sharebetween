@@ -6,7 +6,7 @@ Changelog
 - Enh: Authors can allow or prevent resharing per content item
 - Enh: Approved private profile content can be reshared to a user's own profile stream
 - Enh: Disabling resharing removes existing shares of that content
-- Enh: Authors see whether resharing is allowed for other users, with a status icon and explanatory tooltip
+- Enh: Authors see a compact icon and explanatory tooltip indicating whether resharing is allowed for others
 
 1.1.1 (Februrary 26, 2026)
 --------------------------

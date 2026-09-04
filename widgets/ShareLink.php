@@ -52,11 +52,10 @@ class ShareLink extends Widget
         ];
 
         if ($isOwner) {
-            $label = $isShareAllowed
-                ? Html::tag('i', '', ['class' => 'fa fa-share-alt', 'aria-hidden' => 'true']) . ' '
-                    . Yii::t('SharebetweenModule.base', 'Resharing allowed')
-                : Html::tag('i', '', ['class' => 'fa fa-lock', 'aria-hidden' => 'true']) . ' '
-                    . Yii::t('SharebetweenModule.base', 'Blocked for others');
+            $statusIcon = $isShareAllowed
+                ? Html::tag('i', '', ['class' => 'fa fa-check-circle text-success', 'aria-hidden' => 'true'])
+                : Html::tag('i', '', ['class' => 'fa fa-lock text-danger', 'aria-hidden' => 'true']);
+            $label = Yii::t('SharebetweenModule.base', 'Share') . ' ' . $statusIcon;
             $tooltip = $isShareAllowed
                 ? Yii::t('SharebetweenModule.base', 'Other users are allowed to reshare this content. Click here to change this setting.')
                 : Yii::t('SharebetweenModule.base', 'Other users cannot reshare this content. Click here to allow resharing.');
